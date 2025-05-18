@@ -72,13 +72,7 @@ abstract class SinglyLinkedIntList extends IntList:
   override def reduceLeft(reduceFunc: (Int, Int) => Int): Int = this match {
     case Empty => throw new UnsupportedOperationException("reduce left on empty list")
     case Cons(head, Empty) => head
-    case Cons(head, tail) =>
-      val newAccumulator = reduceFunc(head, tail.head)
-      if (tail.tail.isEmpty) {
-        newAccumulator
-      } else {
-        tail.tail.reduceLeft((acc, x) => reduceFunc(newAccumulator, x))
-      }
+    case Cons(head, tail) => tail.foldLeft(head)(reduceFunc)
   }
 
   override def insertSorted(elem: Int): IntList = this match {

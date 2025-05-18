@@ -58,8 +58,10 @@ abstract class BinaryTree extends IntTree :
         else if (right.isEmpty) left
         else {
           try {
-            val successor = right.asInstanceOf[BinaryTree].findSuccessor
-            NonEmpty(successor.root, left, right.delete(successor.root))
+            val successor = findSuccessor
+            val successorValue = successor.root
+            val newRight = right.delete(successorValue)
+            NonEmpty(successorValue, left, newRight)
           } catch {
             case e: Error => throw new Error(s"Cannot delete node $i: $e")
           }
