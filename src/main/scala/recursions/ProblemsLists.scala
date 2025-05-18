@@ -1,7 +1,9 @@
 package recursions
 
 import list.traits.IntList
-import list.implementation._
+import list.implementation.*
+
+import scala.annotation.tailrec
 
 object ProblemsLists :
 
@@ -21,7 +23,15 @@ object ProblemsLists :
     * @param times number of duplicates
     * @return List of duplicated numbers
     */
-  def duplicateNum(i:Int, times:Int):IntList= ???
+  def duplicateNum(i:Int, times:Int):IntList= {
+    @tailrec
+    def duplicateRecursive(i: Int, remainingTimes: Int, current: IntList): IntList = {
+      if (remainingTimes <= 0) current
+      else duplicateRecursive(i, remainingTimes - 1, Cons(i, current))
+    }
+
+    duplicateRecursive(i, times, Empty)
+  }
 
   /**
     *
@@ -38,7 +48,19 @@ object ProblemsLists :
     * @param l IntList that should be processed
     * @return IntList that contains the duplicates and all other nums
     */
-  def duplicateNumbersFulfillingPredicate(predicate: Int=>Boolean, l:IntList): IntList= ???
+  def duplicateNumbersFulfillingPredicate(predicate: Int=>Boolean, l:IntList): IntList= {
+    if (l.isEmpty) Empty
+    else {
+      val head = l.head
+      val processedTail = duplicateNumbersFulfillingPredicate(predicate, l.tail)
+
+      if (predicate(head)) {
+        Cons(head, Cons(head, processedTail))
+      } else {
+        Cons(head, processedTail)
+      }
+    }
+  }
 
   /**
    *
@@ -53,6 +75,29 @@ object ProblemsLists :
    * @param l     given list
    * @return List of all subsets
    */
-  def combinations(l:IntList):List[IntList]= ???
+  def combinations(l:IntList):List[IntList]= {
+    def toScalaList(intList: IntList): List[Int] = {
+      if (intList.isEmpty) Nil
+      else intList.head :: toScalaList(intList.tail)
+    }
+
+    def toIntList(list: List[Int]): IntList = {
+      list.foldRight(Empty: IntList)((elem, acc) => Cons(elem, acc))
+    }
+
+    val scalaList = toScalaList(l)
+
+    def generateSubsets(remaining: List[Int]): List[List[Int]] = {
+      remaining match {
+        case Nil => List(Nil)
+        case head :: tail =>
+          val subsetsWithoutHead = generateSubsets(tail)
+          val subsetsWithHead = subsetsWithoutHead.map(subset => head :: subset)
+          subsetsWithoutHead ::: subsetsWithHead
+      }
+    }
+
+    generateSubsets(scalaList).map(toIntList)
+  }
 
 

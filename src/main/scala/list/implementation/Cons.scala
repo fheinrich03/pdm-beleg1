@@ -2,6 +2,12 @@ package list.implementation
 
 import list.traits.IntList
 
+/**
+ * Represents a non-empty singly linked list with a head element and a tail list.
+ *
+ * @param head the first element of the list
+ * @param tail the rest of the list
+ */
 case class Cons (head: Int, tail: IntList) extends SinglyLinkedIntList :
 
   override def isEmpty = false
@@ -16,8 +22,17 @@ case class Cons (head: Int, tail: IntList) extends SinglyLinkedIntList :
 
   override def prepend(elem: Int): IntList = Cons(elem,this)
 
-  override def delete(elem: Int): IntList = ???
+  override def delete(elem: Int): IntList = {
+    if (head == elem) tail
+    else Cons(head, tail.delete(elem))
+  }
 
-  override def deleteAll(elem: Int): IntList = ???
+  override def deleteAll(elem: Int): IntList = this match {
+    case Empty => Empty
+    case Cons(head, tail) => {
+      if (head == elem) tail.deleteAll(elem)
+      else Cons(head, tail.deleteAll(elem))
+    }
+  }
 
 
